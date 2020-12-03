@@ -9,8 +9,6 @@ fn main() {
     //println!("{}",result);
 }
 
-
-
 fn count_valid_pws(s: &str){
     let filename = s;
     let file = File::open(filename).expect("file not found!");
