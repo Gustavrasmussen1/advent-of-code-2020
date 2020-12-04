@@ -70,9 +70,6 @@ fn get_path(s: &str, _right: i32, _down: i32) -> String{
             next_line += &_down;
         }
         counter += 1;
-
-
-
     }
     
     path
