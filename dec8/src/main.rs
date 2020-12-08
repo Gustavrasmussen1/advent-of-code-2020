@@ -54,22 +54,29 @@ fn main() {
     let filename = "./dec8_input.txt";
     let file = File::open(filename).expect("file not found!");
     let reader = BufReader::new(file);
-    let input:Vec<String> = reader.lines().map(|x| x.unwrap()).collect();
+    let mut input:Vec<String> = reader.lines().map(|x| x.unwrap()).collect();
 
+    // Part 1
     let mut accumulator:i32 = 0;
     let mut visited_operations: Vec<String> = Vec::new();
-
     let mut current_operation:i32 = 0;
 
+    let terminated = false;
     loop {
 
+        if current_operation as usize >= input.len() {
+            println!("Terminated!");
+            //let terminated = true;
+            break;
+        }
         if visited_operations.contains(&current_operation.to_string()) {
+            //println!("Been here!");
             break;
         }
 
+
         visited_operations.push(current_operation.to_string());
         let (op,x) = parse_operation(&input[current_operation as usize]);
-
 
         accumulator += x;
         current_operation += op;
@@ -78,6 +85,47 @@ fn main() {
         // Part 1
         //println!("{}", accumulator);
     }
+
+    // Part 2
+    let terminated = false;
+    for n in 0..= &input.len()-1 {
+
+        let mut accumulator:i32 = 0;
+        let mut visited_operations: Vec<String> = Vec::new();
+        let mut current_operation:i32 = 0;
+    
+        
+        // Flip operation
+
+        input[n] = flip_operation(&input[n]);
+
+        // Brute force here
+        loop {
+
+            if current_operation as usize >= input.len() {
+                println!("Acc: {}", accumulator);
+                let terminated = true;
+                break;
+            }
+            if visited_operations.contains(&current_operation.to_string()) {
+                break;
+            }
+    
+            visited_operations.push(current_operation.to_string());
+            let (op,x) = parse_operation(&input[current_operation as usize]);
+    
+            accumulator += x;
+            current_operation += op;
+        }
+
+        if terminated {
+            println!("{}", accumulator);
+        }
+
+        // Flip back
+        input[n] = flip_operation(&input[n]);
+    }
+
 
     
 }
@@ -101,4 +149,23 @@ fn parse_operation(operation: &String) -> (i32, i32) {
     }
     
     result
+}
+
+fn flip_operation(operation: &String) -> String {
+
+    let words: Vec<&str> = operation
+    .split_whitespace()
+    .collect();
+    
+    let mut op = words[0];
+    let x = words[1];
+    let mut op_flip = op;
+    match op {
+        "nop" => {op_flip = "jmp";},
+        "jmp" => {op_flip = "nop";},
+        _ => {}
+    }
+
+    op_flip.to_string() + " " +  x
+
 }
